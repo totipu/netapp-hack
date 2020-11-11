@@ -1,12 +1,30 @@
 import http.client, json, os, sys, urllib
-from urllib.parse import urlparse
-import random
+import random, urllib.request
 
 # K8s api service
 # host = "35.242.234.237"
 
 # VM Infrastructure
 host = "tipuric.tk"
+
+# Number of WebSite tests
+web_site_test_num = 1000
+
+# Number of API tests
+api_test_num = 1000
+
+# API Testing Credentials
+api_user = "admin@netapp.com"
+api_password = "Pass@word1"
+
+def CallWebSite (host=None, path="/"):
+    try:            
+        response = urllib.request.urlopen('http://' + host + path)
+        print(response.getcode())
+    except Exception as ex:
+        print(ex)
+        raise ex
+
 
 def CallAPI (method="GET", host=None, function=None, headers=None, body=None):
         
@@ -92,23 +110,36 @@ def DeleteProductById (apikey=None, productId=None):
 brand_ids = [1,2,3,4,5,11,12,13,14,15]
 type_ids = [1,2,3,4,11,12,13,14]
 
+# Load Testing the Web Site
+print("Load Testing the Web Site...")
+for i in range(0, web_site_test_num):
+    CallWebSite(host)
+    CallWebSite(host, "/basket")
+    CallWebSite(host, "/?CatalogModel.BrandFilterApplied=" + str(random.choice(brand_ids)) + 
+        "&CatalogModel.TypesFilterApplied=" + str(random.choice(type_ids)))
+    CallWebSite(host, "/Identity/Account/Login")
+
+# Load Testing the Web Site
+print("Load Testing the API...")
 # Authenticate
-apikey = Authenticate("admin@microsoft.com", "Pass@word1")
+apikey = Authenticate(api_user, api_password)
 print("API key:", apikey)
 
-for i in range(0, 1000):
+for i in range(0, api_test_num):
     
     # Add a Product
-    nas_product_id = AddProduct(apikey, random.choice(brand_ids), random.choice(type_ids), "The product of value " + str(i), "Product no. " + str(i), "/images/products/" + str(random.randint(1,12)) + ".png", "Some nice product picture", random.randint(50,10000)/100)
+    nas_product_id = AddProduct(apikey, random.choice(brand_ids), random.choice(type_ids), 
+        "The product of value " + str(i), "Product no. " + str(i), "/images/products/" + str(random.randint(1,12)) + ".png", 
+        "Some nice product picture", random.randint(50,10000)/100)
 
     # Get a Product
     GetProductById(nas_product_id)
 
     # Delete every second Product
-    # if (i % 2):
-    #     try:
-    #         DeleteProductById(apikey, nas_product_id)
-    #     except Exception as ex:
-    #         print(ex)
-    #         raise ex
+    if (i % 2):
+        try:
+            DeleteProductById(apikey, nas_product_id)
+        except Exception as ex:
+            print(ex)
+            raise ex
 
