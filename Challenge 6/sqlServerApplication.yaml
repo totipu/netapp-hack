@@ -33,7 +33,7 @@ spec:
       volumes:
       - name: sqlserver-volume
         persistentVolumeClaim:
-          claimName: netappclaim
+          claimName: sql-pvc
 ---
 apiVersion: v1
 kind: Service
