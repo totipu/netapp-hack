@@ -1,12 +1,11 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: sqlServerVolumeClaim
+  name: sql-pvc
 spec:
   accessModes:
     - ReadWriteMany
-  volumeMode: Filesystem
   resources:
     requests:
       storage: 50Gi
-  storageClassName: netapppv
+  storageClassName: cvs-standard
