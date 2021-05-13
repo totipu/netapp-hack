@@ -1,4 +1,4 @@
-# netapp-hack
+# NetApp and Google Hackathon: Windows Migration
 
 Resources for NetApp Hackathon
 
